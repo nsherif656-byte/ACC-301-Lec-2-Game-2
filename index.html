@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cost Concepts Master 📊💼</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --error: #ef4444;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: #f8fafc;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 900px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            padding: 25px;
+            position: relative;
+            border: 2px solid #334155;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .stat-badge {
+            background: #334155;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* Question Box */
+        .question-box {
+            background: #0f172a;
+            border: 2px solid #3b82f6;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .q-header {
+            font-size: 13px;
+            font-weight: 800;
+            color: #93c5fd;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .q-text {
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.5;
+            color: #f8fafc;
+        }
+
+        /* Options Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .opt-btn {
+            background: #0f172a;
+            border: 2px solid #475569;
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #f8fafc;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .opt-btn:hover:not(:disabled) {
+            border-color: #60a5fa;
+            background: #1e293b;
+            transform: translateY(-2px);
+        }
+
+        .opt-btn.correct {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.2);
+            color: #a7f3d0;
+        }
+
+        .opt-btn.incorrect {
+            border-color: var(--error);
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        /* Explanation Box */
+        .explanation-box {
+            display: none;
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Action Buttons */
+        .btn-action {
+            width: 100%;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 17px;
+            font-weight: 800;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+            transition: all 0.2s;
+            display: none;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        /* Overlay Screen */
+        .overlay-screen {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.96);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 16px 45px;
+            font-size: 20px;
+            font-weight: 800;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+            transition: transform 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn-start:hover {
+            transform: scale(1.08);
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-card">
+    <div class="header">
+        <div class="title">📊 Cost Concepts Master</div>
+        <div class="badge-container">
+            <div class="stat-badge" id="scoreDisplay">Score: 0</div>
+            <div class="stat-badge" style="color: #60a5fa;" id="levelDisplay">Question: 1/6</div>
+        </div>
+    </div>
+
+    <!-- Active Question Container -->
+    <div class="question-box">
+        <div class="q-header" id="categoryTitle">CATEGORY: COST BEHAVIOR</div>
+        <div class="q-text" id="questionText">Loading...</div>
+    </div>
+
+    <!-- Options -->
+    <div class="options-grid" id="optionsContainer"></div>
+
+    <!-- Explanation -->
+    <div class="explanation-box" id="explanationBox"></div>
+
+    <button class="btn-action" id="nextBtn" onclick="nextQuestion()">Next Challenge ➔</button>
+
+    <!-- Start / End Screen -->
+    <div class="overlay-screen" id="overlay">
+        <h1 style="font-size: 30px; color: #60a5fa; margin-bottom: 10px;">📊 Cost Concepts Master</h1>
+        <p style="color: #94a3b8; max-width: 520px; font-size: 15px; line-height: 1.6;">
+            Test your understanding of Managerial & Cost Accounting concepts! Master Cost Classification, Traceability, Behavior, and Decision Making.
+        </p>
+        <button class="btn-start" onclick="startGame()">Start Game 🚀</button>
+    </div>
+</div>
+
+<script>
+    // Questions sourced directly from the provided images
+    const questions = [
+        {
+            category: "DEFINITIONS & TRACEABILITY",
+            text: "Which cost concept is defined as 'A cost that CANNOT be easily traced to a specific cost object (department or product)'?",
+            options: ["Direct Cost", "Indirect Cost", "Product Cost", "Variable Cost"],
+            correct: 1,
+            explanation: "<b>Indirect Cost:</b> A cost that cannot be traced to a specific cost object (e.g., store manager salary for individual product lines)."
+        },
+        {
+            category: "COST PURPOSE CLASSIFICATION",
+            text: "What is the primary purpose of classifying costs into 'Direct Materials + Direct Labor + Manufacturing Overhead'?",
+            options: [
+                "Making decisions",
+                "Predicting cost behavior in response to changes in activity",
+                "Preparing external financial statements",
+                "Assigning costs to cost objects"
+            ],
+            correct: 2,
+            explanation: "<b>Preparing External Financial Statements:</b> Requires classifying costs into Product Costs (inventoriable) vs. Period Costs (expensed)."
+        },
+        {
+            category: "CASE ANALYSIS: STORE MANAGER SALARY",
+            text: "According to the classification table, how is 'Store Manager Salary' classified when the purpose is 'Predicting Cost Behavior'?",
+            options: ["Variable Cost", "Fixed Cost", "Period Cost", "Sunk Cost"],
+            correct: 1,
+            explanation: "<b>Fixed Cost:</b> Store Manager Salary remains constant in total regardless of changes in sales activity levels."
+        },
+        {
+            category: "DECISION MAKING",
+            text: "Which type of cost represents 'A past cost that has already been incurred and CANNOT be recovered or affected by a decision'?",
+            options: ["Opportunity Cost", "Differential Cost", "Sunk Cost", "Avoidable Cost"],
+            correct: 2,
+            explanation: "<b>Sunk Cost:</b> Past costs are irrelevant to future decisions because they cannot be changed or recovered."
+        },
+        {
+            category: "COST BEHAVIOR",
+            text: "A cost that contains BOTH variable and fixed components is referred to as a:",
+            options: ["Standard Cost", "Indirect Cost", "Mixed Cost (Semi-variable)", "Incremental Cost"],
+            correct: 2,
+            explanation: "<b>Mixed Cost:</b> Contains a fixed baseline element plus a variable component that changes with activity level."
+        },
+        {
+            category: "DECISION MAKING",
+            text: "What concept describes 'The benefit sacrificed when choosing one alternative over another'?",
+            options: ["Opportunity Cost", "Avoidable Cost", "Budgeted Cost", "Actual Cost"],
+            correct: 0,
+            explanation: "<b>Opportunity Cost:</b> The potential benefit given up by selecting one option over a competing alternative."
+        }
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+
+    // Web Audio Sound Generator
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playAudio(type) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'correct') {
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+            gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        } else {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(120, audioCtx.currentTime + 0.12);
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.25);
+        }
+    }
+
+    function startGame() {
+        score = 0;
+        currentIdx = 0;
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('scoreDisplay').textContent = `Score: 0`;
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const q = questions[currentIdx];
+        document.getElementById('categoryTitle').textContent = `CATEGORY: ${q.category}`;
+        document.getElementById('questionText').textContent = q.text;
+        document.getElementById('levelDisplay').textContent = `Question: ${currentIdx + 1}/${questions.length}`;
+
+        const container = document.getElementById('optionsContainer');
+        container.innerHTML = '';
+
+        q.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.id = `opt-${idx}`;
+            btn.innerHTML = `<span>${opt}</span>`;
+            btn.onclick = () => selectOption(idx);
+            container.appendChild(btn);
+        });
+
+        document.getElementById('explanationBox').style.display = 'none';
+        document.getElementById('nextBtn').style.display = 'none';
+    }
+
+    function selectOption(selectedIdx) {
+        const q = questions[currentIdx];
+        const isCorrect = selectedIdx === q.correct;
+
+        // Disable all option buttons
+        const buttons = document.querySelectorAll('.opt-btn');
+        buttons.forEach((btn, idx) => {
+            btn.disabled = true;
+            if (idx === q.correct) {
+                btn.classList.add('correct');
+                btn.innerHTML += ` <span>✅</span>`;
+            } else if (idx === selectedIdx && !isCorrect) {
+                btn.classList.add('incorrect');
+                btn.innerHTML += ` <span>❌</span>`;
+            }
+        });
+
+        const expBox = document.getElementById('explanationBox');
+        expBox.style.display = 'block';
+
+        if (isCorrect) {
+            playAudio('correct');
+            score += 15;
+            document.getElementById('scoreDisplay').textContent = `Score: ${score}`;
+            expBox.style.borderColor = '#10b981';
+            expBox.innerHTML = `<span style="color: #10b981; font-weight: bold; font-size: 16px;">✅ Correct!</span><br><br>${q.explanation}`;
+        } else {
+            playAudio('wrong');
+            expBox.style.borderColor = '#ef4444';
+            expBox.innerHTML = `<span style="color: #ef4444; font-weight: bold; font-size: 16px;">❌ Incorrect</span><br><br>${q.explanation}`;
+        }
+
+        document.getElementById('nextBtn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+        currentIdx++;
+        if (currentIdx < questions.length) {
+            loadQuestion();
+        } else {
+            finishGame();
+        }
+    }
+
+    function finishGame() {
+        const overlay = document.getElementById('overlay');
+        overlay.innerHTML = `
+            <h1 style="font-size: 32px; color: #10b981; margin-bottom: 10px;">🎉 Challenge Completed!</h1>
+            <p style="font-size: 20px; color: #f8fafc; margin-bottom: 20px;">Your Final Score: <strong>${score} / ${questions.length * 15}</strong></p>
+            <button class="btn-start" onclick="startGame()">Play Again 🔄</button>
+        `;
+        overlay.style.display = 'flex';
+    }
+</script>
+
+</body>
+</html>
